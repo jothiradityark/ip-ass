@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship Details</title>
+    <!-- Include SweetAlert Library -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <!-- Include jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Include jsPDF AutoTable Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        /* Your existing CSS styles */
+        body {
+            display: flex;
+            background-image: url(ssn-college.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .sub {
+            display: flex;
+            flex-direction: column;
+            background-color: rgba(255, 255, 255, 0.2);
+            /* Adjusted width for better table display */
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 3px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column; /* Ensures checkboxes appear in rows */
+            gap: 5px; /* Adds spacing between checkboxes */
+        }
+
+        .submit-btn {
+            background-color: blue;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: darkblue;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-container input {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .search-container button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+        }
+
+        .search-container button:hover {
+            background-color: darkblue;
+        }
+
+        .results-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        .results-table th, .results-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .results-table th {
+            background-color: #f2f2f2;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="sub">
+        <h1>Student Internship Details</h1>
+        <!-- Results Table with Dropdown Filters -->
+        <table class="results-table" id="results-table">
+            <thead>
+                <tr>
+                    <th>Register Number <select class="filter-select" onchange="filterTable(0)">
+                        <option value="">All</option>
+                    </select></th>
+                    <th>Name <select class="filter-select" onchange="filterTable(1)">
+                        <option value="">All</option>
+                    </select></th>
+                    <th>Mobile <select class="filter-select" onchange="filterTable(2)">
+                        <option value="">All</option>
+                    </select></th>
+                    <th>Section <select class="filter-select" onchange="filterTable(3)">
+                        <option value="">All</option>
+                    </select></th>
+                    <th>Internship <select class="filter-select" onchange="filterTable(4)">
+                        <option value="">All</option>
+                    </select></th>
+                    <th>Period <select class="filter-select" onchange="filterTable(5)">
+                        <option value="">All</option>
+                    </select></th>
+                    <th>Start Date <select class="filter-select" onchange="filterTable(6)">
+                        <option value="">All</option>
+                    </select></th>
+                    <th>End Date <select class="filter-select" onchange="filterTable(7)">
+                        <option value="">All</option>
+                    </select></th>
+                    <th>Company <select class="filter-select" onchange="filterTable(8)">
+                        <option value="">All</option>
+                    </select></th>
+                    <th>Source <select class="filter-select" onchange="filterTable(9)">
+                        <option value="">All</option>
+                    </select></th>
+                    <th>Stipend <select class="filter-select" onchange="filterTable(10)">
+                        <option value="">All</option>
+                    </select></th>
+                    <th>Internship Type <select class="filter-select" onchange="filterTable(11)">
+                        <option value="">All</option>
+                    </select></th>
+                    <th>Location <select class="filter-select" onchange="filterTable(12)">
+                        <option value="">All</option>
+                    </select></th>
+                    <th>Documents <select class="filter-select" onchange="filterTable(13)">
+                        <option value="">All</option>
+                    </select></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be populated here -->
+            </tbody>
+        </table>
+        <!-- Generate PDF Button -->
+        <button onclick="generatePDF()" class="submit-btn">Generate PDF</button>
+    </div>
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbwK4ARmFxLqY0voCi-su1i2RK6QYfgolTk5rkUkLLZuRfuIDZgfzoSFvx7tkrYKw_sS/exec";
+
+        // Fetch and display all data on page load
+        window.onload = function() {
+            fetch(`${scriptURL}?action=getAll`)
+                .then(response => response.json())
+                .then(data => {
+                    populateTable(data);
+                    populateFilters(data); // Populate dropdown filters
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        };
+
+        // Function to populate the table with data
+        function populateTable(data) {
+            const tableBody = document.querySelector('#results-table tbody');
+            tableBody.innerHTML = ''; // Clear previous results
+            if (data.length > 0) {
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.regno}</td>
+                        <td>${row.name}</td>
+                        <td>${row.mobile}</td>
+                        <td>${row.section}</td>
+                        <td>${row.internship}</td>
+                        <td>${row.period}</td>
+                        <td>${row.start}</td>
+                        <td>${row.end}</td>
+                        <td>${row.company}</td>
+                        <td>${row.source}</td>
+                        <td>${row.stipend}</td>
+                        <td>${row.internshipType}</td> <!-- Ensure this matches the key in your data -->
+                        <td>${row.location}</td>
+                        <td>${row.documents}</td> <!-- Ensure this matches the key in your data -->
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="14">No results found</td></tr>';
+            }
+        }
+        // Function to populate dropdown filters
+        function populateFilters(data) {
+            const filters = document.querySelectorAll('.filter-select');
+            filters.forEach((filter, index) => {
+                const uniqueValues = [...new Set(data.map(row => Object.values(row)[index]))];
+                uniqueValues.forEach(value => {
+                    const option = document.createElement('option');
+                    option.value = value;
+                    option.textContent = value;
+                    filter.appendChild(option);
+                });
+            });
+        }
+
+        // Function to filter the table
+        function filterTable(columnIndex) {
+            const filter = document.querySelectorAll('.filter-select')[columnIndex].value;
+            const table = document.getElementById('results-table');
+            const tr = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < tr.length; i++) { // Start from 1 to skip header row
+                const td = tr[i].getElementsByTagName('td')[columnIndex];
+                if (td) {
+                    const txtValue = td.textContent || td.innerText;
+                    if (filter === "" || txtValue === filter) {
+                        tr[i].style.display = '';
+                    } else {
+                        tr[i].style.display = 'none';
+                    }
+                }
+            }
+        }
+
+        // Function to generate PDF
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Get table data
+            const table = document.getElementById('results-table');
+            const headers = [];
+            const rows = [];
+
+            // Extract headers
+            table.querySelectorAll('thead th').forEach(th => {
+                headers.push(th.textContent.replace(/[\n\r]/g, '').trim());
+            });
+
+            // Extract rows
+            table.querySelectorAll('tbody tr').forEach(tr => {
+                const row = [];
+                tr.querySelectorAll('td').forEach(td => {
+                    row.push(td.textContent.trim());
+                });
+                rows.push(row);
+            });
+
+            // Generate PDF
+            doc.autoTable({
+                head: [headers],
+                body: rows,
+            });
+
+            // Save PDF
+            doc.save('internship_details.pdf');
+        }
+    </script>
+</body>
+</html>

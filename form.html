@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internship Details</title>
+    <!-- Include SweetAlert Library -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <style>
+        /* Your existing CSS styles */
+        body {
+            display: flex;
+            background-image: url(ssn-college.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .sub {
+            display: flex;
+            flex-direction: column;
+            background-color: rgba(255, 255, 255, 0.2);
+            width: 500px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 3px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column; /* Ensures checkboxes appear in rows */
+            gap: 5px; /* Adds spacing between checkboxes */
+        }
+
+        .submit-btn {
+            background-color: blue;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: darkblue;
+        }
+    </style>
+</head>
+<body>
+    <div class="sub">
+        <h1>Student Internship Details Form</h1>
+        <!-- Add name attribute to the form -->
+        <form name="submit-to-google-sheet" class="frm">
+            <!-- Your existing form fields -->
+            <label for="regno">Register Number:</label>
+            <input type="text" name="regno">
+
+            <label for="name">Name:</label>
+            <input type="text" name="name">
+
+            
+
+            <label for="mobile">Mobile No.:</label>
+            <input type="text" name="mobile">
+
+            <label for="section">Section:</label>
+            <input type="text" name="section">
+
+            <label for="internship">Obtained Internship:</label>
+            <select name="internship">
+                <option>Yes</option>
+                <option>No</option>
+            </select>
+
+            <label for="period">Period (e.g., 2 months):</label>
+            <input type="text" name="period">
+
+            <label for="start">Start Date:</label>
+            <input type="date" name="start">
+
+            <label for="end">End Date:</label>
+            <input type="date" name="end">
+
+            <label for="company">Company Name:</label>
+            <input type="text" name="company">
+
+            <label for="source">Placement Source:</label>
+            <select name="source">
+                <option>Through College</option>
+                <option>Self Applied</option>
+            </select>
+
+            <label for="stipend">Stipend (in Rs.):</label>
+            <input type="number" name="stipend">
+
+            <label for="internship-type">Internship Type:</label>
+            <select name="internship-type">
+                <option>Research</option>
+                <option>Industrial</option>
+            </select>
+
+            <label for="location">Abroad / India:</label>
+            <select name="location">
+                <option>India</option>
+                <option>Abroad</option>
+            </select>
+
+            <fieldset>
+                <legend>Document Submission</legend>
+                <div class="checkbox-group">
+                    <div><input type="checkbox" name="permission" value="Yes"> Signed Permission Letter, Offer Letter Submitted</div>
+                    <div><input type="checkbox" name="completion" value="Yes"> Completion Certificate Submitted</div>
+                    <div><input type="checkbox" name="report" value="Yes"> Internship Report Submitted</div>
+                    <div><input type="checkbox" name="feedback" value="Yes"> Student Feedback Submitted</div>
+                    <div><input type="checkbox" name="employer-feedback" value="Yes"> Employer Feedback Submitted</div>
+                </div>
+            </fieldset>
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbxsngbFmmFCVwzREZ-RjDzHMN6LZ6IqPQal_gqUKHak_rdEqKxmnwKNBrxHHqc6hCLo/exec";
+        const form = document.forms["submit-to-google-sheet"];
+    
+        form.addEventListener("submit", (e) => {
+            e.preventDefault(); // Prevent the default form submission
+        
+            // Create a FormData object to collect form data
+            const formData = new FormData(form);
+        
+            // Checkbox handling for Documents
+            const checkboxes = [
+                "permission",
+                "completion",
+                "report",
+                "feedback",
+                "employer-feedback"
+            ];
+        
+            let documents = [];
+            checkboxes.forEach((checkboxName) => {
+                const checkbox = form.querySelector(`input[name="${checkboxName}"]`);
+                if (checkbox.checked) {
+                    documents.push(checkboxName);
+                }
+            });
+        
+            // Append the combined documents string to formData
+            formData.append("documents", documents.join(", "));
+        
+            // Send the form data to the Google Sheets script
+            fetch(scriptURL, { method: "POST", body: formData })
+                .then((response) => {
+                    swal("Done", "Submitted Successfully.", "success"); // Show success message
+                    form.reset(); // Reset the form after successful submission
+                })
+                .catch((error) => {
+                    swal("Error", "Something went wrong. Please try again!", "error"); // Show error message
+                });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <title>
+            
+        </title>
+        <style>
+            body{
+                background-image: url("log-back.jpg") ;
+                background-size: cover;
+                background-repeat: no-repeat;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+
+                
+            }
+            
+           
+             
+               
+                
+
+
+                
+            
+            .admin, .stud {
+                height: 60px;
+                width: 150px; /* Only need to set once */
+                border: 2px solid blue;
+                border-radius: 5px;
+                box-shadow: 0px 0px 10px blue;
+                color: rgb(255, 255, 255);
+                cursor: pointer;
+                
+                
+                background-color: rgba(255, 255, 255, 0.3); /* Semi-transparent background */
+                backdrop-filter: blur(3px); /* Blurs the background behind the button */
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+          
+            
+           button:hover{
+            box-shadow: 0px 0px 50px blue;
+           }
+           a:hover{
+            box-shadow: 0px 0px 10px rgb(218, 218, 225);
+           }
+
+        </style>
+    </head>
+    <body>
+        <div class="options">
+            <button class="admin" onclick="location.href='admin-log.html'" > <b> <i>Admin</i> </b></button><br>
+            <button class="stud" onclick="location.href='stud-log .html'"><b><i>Student</i></b></button><br>
+            <a href="http://127.0.0.1:3000/email copy.html">Register</a>
+        </div>
+    
+    </body>
+</html>
